@@ -5,7 +5,7 @@ local f0_local0 = function(arg0, arg1, arg2)
     local f1_local0 = LUI.DataSourceInGlobalModel.new("frontEnd.lobby.findMatchButtonWaitStatus")
     arg0:SubscribeToModel(f1_local0:GetModel(arg1), function()
         local f2_local0 = f1_local0:GetValue(arg1)
-        local f2_local1 = "Browse for Custom Servers"
+        local f2_local1 = Engine.Localize( "PLATFORM_DESC_FIND_GAME" )
         if f2_local0 == "" then
             arg0.MissionSelect:SetButtonDisabled(false)
         else
@@ -28,6 +28,8 @@ local f0_local0 = function(arg0, arg1, arg2)
 end
 
 function MissionsVerticalLayout(menu, controller)
+    Engine.Exec( "xstartlobby" )
+    Engine.SetDvarBool( "Xblive_Privatematch", false )
     local self = LUI.UIVerticalList.new()
     self:SetAnchorsAndPosition(0, 1, 0, 1, 0, 500 * _1080p, 0, 330 * _1080p)
     self.id = "MissionsVerticalLayout"
@@ -46,8 +48,9 @@ function MissionsVerticalLayout(menu, controller)
         controllerIndex = controllerIndex
     })
     MissionSelect.id = "MissionSelect"
-    MissionSelect.buttonDescription = "Browse for Custom Servers"
-    MissionSelect.Text:setText(ToUpperCase("Server Browser"), 0)
+    MissionSelect.buttonDescription = Engine.Localize( "LUA_MENU_DESC_GAMEMODE" )
+    MissionSelect.Text:setText( ToUpperCase("combat training"), 0 )
+    --MissionSelect.Text:setText( ToUpperCase( DataSources.frontEnd.lobby.gameTypeName:GetValue( f12_arg0 ) ), 0 )
     MissionSelect:SetAnchorsAndPosition(0, 0, 0, 1, 0, _1080p * -4, 0, _1080p * 30)
     self:addElement(MissionSelect)
     self.MissionSelect = MissionSelect
@@ -58,8 +61,8 @@ function MissionsVerticalLayout(menu, controller)
         controllerIndex = controllerIndex
     })
     MissionSelect2.id = "MissionSelect2"
-    MissionSelect2.buttonDescription = Engine.Localize( "PLATFORM_DESC_FIND_GAME" )
-    MissionSelect2.Text:setText( ToUpperCase( "COMBAT TRAINING" ), 0 )
+    MissionSelect2.buttonDescription = "Browse for Custom Servers"
+    MissionSelect2.Text:setText(ToUpperCase("Server Browser"), 0)
     MissionSelect2:SetAnchorsAndPosition(0, 0, 0, 1, 0, _1080p * -4, 0, _1080p * 30)
     self:addElement(MissionSelect2)
     self.MissionSelect2 = MissionSelect2
@@ -161,15 +164,17 @@ function MissionsVerticalLayout(menu, controller)
     self._animationSets.DefaultAnimationSet()
     MissionSelect:addEventHandler("button_action", function(f11_arg0, f11_arg1)
         local f11_local0 = f11_arg1.controller or controllerIndex
-        ACTIONS.OpenMenu("SystemLinkMenu", true, f11_local0)
-    end)
-    MissionSelect2:addEventHandler("button_action", function(f11_arg0, f11_arg1)
-        local f11_local0 = f11_arg1.controller or controllerIndex
-        ACTIONS.OpenMenu("PlaylistMenu", true, f11_local0)
+        --ACTIONS.OpenMenu("PlaylistMenu", true, f11_local0)
+        ACTIONS.OpenMenu("LobbyMission", true, f11_local0)
     end)
     MissionTeams:addEventHandler("button_action", function(f12_arg0, f12_arg1)
         ACTIONS.OpenMenu("MissionTeamSelect", true, f12_arg1.controller or controllerIndex)
     end)
+    MissionSelect2:addEventHandler("button_action", function(f13_arg0, f13_arg1)
+        local f13_local0 = f13_arg1.controller or controllerIndex
+        ACTIONS.OpenMenu("SystemLinkMenu", true, f13_local0)
+    end)
+
     f0_local0(self, controllerIndex, controller)
     return self
 end
