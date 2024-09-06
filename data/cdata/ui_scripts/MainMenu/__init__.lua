@@ -9,3 +9,7 @@ require("MissionsVerticalLayout")
 require("MPMainMenuButtons")
 require("MPMainMenu")
 require("LobbyMissionVerticalLayout")
+require("LobbyMission")
+require("LobbyMission2")
+
+

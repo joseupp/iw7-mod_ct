@@ -1,5 +1,6 @@
 local f0_local0 = module
 local f0_local1, f0_local2 = ...
+
 f0_local0( f0_local1, package.seeall )
 f0_local0 = function ( f1_arg0, f1_arg1, f1_arg2 )
 	assert( f1_arg0.CAC )
@@ -18,11 +19,15 @@ f0_local0 = function ( f1_arg0, f1_arg1, f1_arg2 )
 		local f4_local0 = LUI.FlowManager.GetScopedData( f1_arg0 )
 		f4_local0.mapGridIndex = 0
 	end )
-    f1_arg0.StartButton:addEventHandler( "gain_focus", function ( f4_arg0, f4_arg1 )
+    f1_arg0.StartButton:addEventHandler( "gain_focus", function ( f5_arg0, f5_arg1 )
 		local f4_local0 = LUI.FlowManager.GetScopedData( f1_arg0 )
 		f4_local0.mapGridIndex = 0
 	end )
-    f1_arg0.ChangeMap:addEventHandler( "gain_focus", function ( f4_arg0, f4_arg1 )
+    f1_arg0.ChangeMap:addEventHandler( "gain_focus", function ( f6_arg0, f6_arg1 )
+		local f4_local0 = LUI.FlowManager.GetScopedData( f1_arg0 )
+		f4_local0.mapGridIndex = 0
+	end )
+	f1_arg0.GameSetup2:addEventHandler( "gain_focus", function ( f7_arg0, f7_arg1 )
 		local f4_local0 = LUI.FlowManager.GetScopedData( f1_arg0 )
 		f4_local0.mapGridIndex = 0
 	end )
@@ -35,6 +40,7 @@ f0_local0 = function ( f1_arg0, f1_arg1, f1_arg2 )
 end
 
 function LobbyMissionVerticalLayout( menu, controller )
+	Engine.SetDvarBool( "Xblive_Privatematch", false )
 	local self = LUI.UIVerticalList.new()
 	self:SetAnchorsAndPosition( 0, 1, 0, 1, 0, 600 * _1080p, 0, 565 * _1080p )
 	self.id = "LobbyMissionVerticalLayout"
@@ -48,8 +54,7 @@ function LobbyMissionVerticalLayout( menu, controller )
 	self.soundSet = "bink"
 	local f6_local2 = self
 	self:SetSpacing( 10 * _1080p )
-	local CAC = nil
-
+	
     local StartButton = nil
 
     StartButton = MenuBuilder.BuildRegisteredType( "GenericButton", {
@@ -62,14 +67,6 @@ function LobbyMissionVerticalLayout( menu, controller )
 	self:addElement( StartButton )
 	self.StartButton = StartButton
 	
-	CAC = MenuBuilder.BuildRegisteredType( "CreateAClassButton", {
-		controllerIndex = f6_local1
-	} )
-	CAC.id = "CAC"
-	CAC:SetAnchorsAndPosition( 0, 1, 0, 1, 0, _1080p * 500, 0, _1080p * 30 )
-	self:addElement( CAC )
-	self.CAC = CAC
-
     local ChangeMap = nil
 
     ChangeMap = MenuBuilder.BuildRegisteredType( "GenericButton", {
@@ -79,8 +76,30 @@ function LobbyMissionVerticalLayout( menu, controller )
 	ChangeMap.buttonDescription = Engine.Localize( "LUA_MENU_DESC_MAP" )
 	ChangeMap.Text:setText( ToUpperCase(Engine.Localize( "LUA_MENU_MAP_CAPS" ) ), 0 )
 	ChangeMap:SetAnchorsAndPosition( 0, 1, 0, 1, 0, _1080p * 500, _1080p * 120, _1080p * 150 )
-	self:addElement( ChangeMap )
+	--self:addElement( ChangeMap )
 	self.ChangeMap = ChangeMap
+
+	local GameSetup2 = nil
+	
+	GameSetup2 = MenuBuilder.BuildRegisteredType( "GenericButton", {
+		controllerIndex = f6_local1
+	} )
+	GameSetup2.id = "GameSetup2"
+	GameSetup2.buttonDescription = Engine.Localize( "LUA_MENU_DESC_GAME_SETUP" )
+	GameSetup2.Text:setText( Engine.Localize( "LUA_MENU_GAME_SETUP_CAPS" ), 0 )
+	GameSetup2:SetAnchorsAndPosition( 0, 1, 0, 1, 0, _1080p * 500, _1080p * 120, _1080p * 150 )
+	self:addElement( GameSetup2 )
+	self.GameSetup2 = GameSetup2
+
+	local CAC = nil
+
+	CAC = MenuBuilder.BuildRegisteredType( "CreateAClassButton", {
+		controllerIndex = f6_local1
+	} )
+	CAC.id = "CAC"
+	CAC:SetAnchorsAndPosition( 0, 1, 0, 1, 0, _1080p * 500, 0, _1080p * 30 )
+	self:addElement( CAC )
+	self.CAC = CAC
 	
 	local MissionTeamSelect = nil
 	
@@ -137,8 +156,6 @@ function LobbyMissionVerticalLayout( menu, controller )
 	self:addElement( ButtonDescription )
 	self.ButtonDescription = ButtonDescription
 
-
-	
 	local Spacer = nil
 	
 	Spacer = LUI.UIImage.new()
@@ -181,7 +198,7 @@ function LobbyMissionVerticalLayout( menu, controller )
 	self.MapVoteButtons = MapVoteButtons
 	
 	self._animationSets.DefaultAnimationSet = function ()
-		self._sequences.DefaultSequence = function ()
+	self._sequences.DefaultSequence = function ()
 			
 		end
 		
@@ -215,18 +232,30 @@ function LobbyMissionVerticalLayout( menu, controller )
 	end
 	
 	self._animationSets.DefaultAnimationSet()
+	
 	MissionTeamSelect:addEventHandler( "button_action", function ( f13_arg0, f13_arg1 )
+		Engine.SetDvarBool( "Xblive_Privatematch", false )
 		ACTIONS.OpenMenu( "MissionTeamSelect", true, f13_arg1.controller or f6_local1 )
 	end )
 	Barracks:addEventHandler( "button_action", function ( f14_arg0, f14_arg1 )
+		Engine.SetDvarBool( "Xblive_Privatematch", false )
 		ACTIONS.OpenMenu( "Headquarters", true, f14_arg1.controller or f6_local1 )
 	end )
     StartButton:addEventHandler( "button_action", function ( f15_arg0, f15_arg1 )
-        Engine.Exec( "xblive_privatematch 1;xpartygo;xblive_privatematch 0" )
+		LUI.UIRoot.BlockButtonInput( Engine.GetLuiRoot(), false, "TransitionToGame" )
+		Engine.Exec( "xblive_privatematch 1")
+		Engine.Exec( "xpartygo" )
+		Engine.Exec( "xblive_privatematch 0")
 	end )
     ChangeMap:addEventHandler( "button_action", function ( f16_arg0, f16_arg1 )
-       -- Engine.Exec( "xstartlobby" )
        ACTIONS.OpenMenu( "Maps", true, f16_arg1.controller or f6_local1 )
+	end )
+	GameSetup2:addEventHandler( "button_action", function ( f17_arg0, f17_arg1 )
+		--Engine.Exec( "xstartlobby" )
+		--Engine.SetDvarBool( "Xblive_Privatematch", true )
+		LUI.FlowManager.RequestAddMenu( "GameSetup2", true, f17_arg1.controller, false, {
+			isSoloMode = false
+		} )
 	end )
 	f0_local0( self, f6_local1, controller )
 	return self
